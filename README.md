@@ -5,5 +5,4 @@ This program will interrogate a directory of Shapefiles and associated metadata 
 
 ToDo:
 =====
-- Add support for non-associated miscellaneous files
 - Module to deal with layer handling
