@@ -75,19 +75,24 @@ for path, dir, files in os.walk(BASED):
 # in a list to be used later. 
 features = []
 for file in FILE_MASTER:
-    driver = ogr.GetDriverByName('ESRI Shapefile')
-    input_features_datasource = driver.Open(BASED + file + '.shp')
-    if input_features_datasource is None:
-        print 'Could not open ' + file
-        exit(0)
-    input_layer = input_features_datasource.GetLayer()
-    west, east, north, south = input_layer.GetExtent()
-    feat = mk_json_feature(north, south, east, west, file, 
-                           ';'.join(FILE_MASTER[file]['data']), 'No')
-    features.append(feat)
+    if 'data' in FILE_MASTER[file]:
+        driver = ogr.GetDriverByName('ESRI Shapefile')
+        input_features_datasource = driver.Open(BASED + file + '.shp')
+        if input_features_datasource is None:
+            print 'Could not open ' + file
+            exit(0)
+        input_layer = input_features_datasource.GetLayer()
+        west, east, north, south = input_layer.GetExtent()
+        feat = mk_json_feature(north, south, east, west, file, 
+                            ';'.join(FILE_MASTER[file]['data']), 'No')
+        features.append(feat)
+    else:
+        feat = mk_json_feature(90.0, -90.0, 180.0, -180.0, file, 
+                               ';'.join(FILE_MASTER[file]['misc']), 'Yes')
+        features.append(feat)
 
     try:
-        if FILE_MASTER[file]['misc'] != []:
+        if FILE_MASTER[file]['data'] != [] and FILE_MASTER[file]['misc'] != []:
             feat = mk_json_feature(north, south, east, west, file, 
                                 ';'.join(FILE_MASTER[file]['misc']), 'Yes')
             features.append(feat)
