@@ -33,7 +33,7 @@ def mk_toc(features):
     features.append(lut)
 
     geojson = dict()
-    geojson['type'] = 'Featurefeatures'
+    geojson['type'] = 'FeatureCollection'
     geojson['name'] = 'NewFeatureType'
     geojson['features'] = features
 
