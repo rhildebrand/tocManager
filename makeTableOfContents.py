@@ -26,6 +26,21 @@ def mk_json_feature(north, south, east, west, file, exts, misc):
 
     return feature
 
+def mk_json_feature_point(lon, lat, file, exts, misc):
+    '''Make a JSON point feature instead of a polygon.'''
+    properties = dict()
+    properties['PATH'] = './' + file.split('.')[0]
+    properties['EXTS'] = exts
+    properties['LAYERS'] = '0'
+    properties['WEO_TYPE'] = 'WEO_FEATURE'
+    properties['WEO_MISCELLANEOUS_FILE'] = misc
+
+    geometry = {'type': 'Point', 'coordinates': [lon, lat]}
+
+    feature = {'geometry': geometry, 'type': 'Feature', 'properties': properties}
+
+    return feature
+
 def mk_toc(features):
     '''The last step in the process and handles the creation of the Look Up 
     Table and wraps all of the Table of Contents features in the necessary 
@@ -87,7 +102,19 @@ def main():
                     print 'Could not open ' + file
                     exit(0)
                 input_layer = input_features_datasource.GetLayer()
-                west, east, north, south = input_layer.GetExtent()
+
+                # This conditional handles POINT vectors instead of polygons.
+                if input_layer.GetGeomType() == 1:
+                    point = input_layer.GetNextFeature()
+                    geom = point.GetGeometryRef()
+                    longitude = geom.GetX()
+                    latitude = geom.GetY()
+                    feat = mk_json_feature_point(longitude, latitude, file, ';'.join(FILE_MASTER[file]['data']), 'No')
+                    features.append(feat)
+                    continue
+                else:
+                    west, east, north, south = input_layer.GetExtent()
+
             else:
                 d = gdal.Open(OPTIONS.BASEDIR + file + '.' + FILE_MASTER[file]['data'][0])
                 geo_info = d.GetGeoTransform()
