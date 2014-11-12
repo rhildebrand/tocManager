@@ -1,9 +1,9 @@
 import os
-import ogr
-import osr
-import gdal
 import json
 import argparse
+from osgeo import ogr
+from osgeo import osr
+from osgeo import gdal
 
 FILE_MASTER = dict()
 
