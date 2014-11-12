@@ -12,7 +12,7 @@ def mk_json_feature(north, south, east, west, file, exts, misc):
     plus additional infromation such as the base file name, all associated 
     extensions, and the type of WeoGeo feature it is.'''
     properties = dict()
-    properties['PATH'] = './' + file.split('.')[0]
+    properties['PATH'] = './' + file
     properties['EXTS'] = exts
     properties['LAYERS'] = '0'
     properties['WEO_TYPE'] = 'WEO_FEATURE'
@@ -29,7 +29,7 @@ def mk_json_feature(north, south, east, west, file, exts, misc):
 def mk_json_feature_point(lon, lat, file, exts, misc):
     '''Make a JSON point feature instead of a polygon.'''
     properties = dict()
-    properties['PATH'] = './' + file.split('.')[0]
+    properties['PATH'] = './' + file
     properties['EXTS'] = exts
     properties['LAYERS'] = '0'
     properties['WEO_TYPE'] = 'WEO_FEATURE'
@@ -79,9 +79,10 @@ def mk_file_dict(base, ext, type):
 def main():
     for path, dir, files in os.walk(OPTIONS.BASEDIR):
         for file in files:
-            # FIX_ME: Ugly, but it handles multi-extensions and directory structure.
-            base = '.'.join((os.path.join(path.replace(OPTIONS.BASEDIR, ''), file)).split('.')[:1])
-            ext = '.'.join(file.split('.')[1:])
+            # FIX_ME: Need to account for multi-part extensions like shp.xml.
+            base = '.'.join((os.path.join(path.replace(OPTIONS.BASEDIR, ''), file)).split('.')[:-1])
+            ext = '.'.join(file.split('.')[-1:])
+
             if ext not in ['shp', 'dbf', 'prj', 'shx', 'sbn', 'sbx', 'tif']:
                 mk_file_dict(base.replace('\\', '/'), ext, 'misc')
             else:
