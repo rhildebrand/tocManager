@@ -186,7 +186,7 @@ def main():
                             feat = do_reprojection_process(input_layer, file, srs)
                             features.append(feat)
                     else:
-                        feat = do_reprojection_process(input_layer, file)
+                        feat = do_reprojection_process(input_layer, file, srs)
                         features.append(feat)
                 # The data is already in Lat/Lon WGS84.
                 else:
